@@ -1,0 +1,6 @@
+# Ignore files related to user specifications
+.vs/
+
+# Ignore binary compiled files
+bin/
+obj/
