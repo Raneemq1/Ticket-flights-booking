@@ -1,10 +1,14 @@
 ﻿using System;
+using TicketFlightsBooking.service;
+using TicketFlightsBooking.utils;
+
 namespace TicketAirportBooking
 {
     public class Program
     {
         static void Main(string[] args)
         {
+
             MainMenu();
         }
 
@@ -47,9 +51,7 @@ namespace TicketAirportBooking
                     case "5": { Environment.Exit(0); break; }
                     default: Console.WriteLine("Please enter a valid input"); break;
                 }
-                Console.Clear();
-                Console.WriteLine("1-Book a Flight\n2-Search a flight\n" +
-                "3-Manage Booking\n4-Main Menu\n5-Exit");
+
                 input = Console.ReadLine();
             }
         }
@@ -63,14 +65,19 @@ namespace TicketAirportBooking
             {
                 switch (input)
                 {
-                    case "1": { break; }
+                    case "1":
+                        {
+                            CSVReader file = new CSVReader();
+                            file.GetFlightsData(SystemData.filePath);
+                            Console.WriteLine("Successfully Upload the data");
+                            break;
+                        }
                     case "2": { break; }
                     case "3": { MainMenu(); break; }
                     case "4": { Environment.Exit(0); break; }
                     default: Console.WriteLine("Please enter a valid number"); break;
                 }
-                Console.Clear();
-                Console.WriteLine("1-Upload data\n2-Filter Booking\n3-Main Menu\n4-Exit");
+
                 input = Console.ReadLine();
             }
 
