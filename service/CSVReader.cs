@@ -1,72 +1,81 @@
-﻿using System;
+﻿using CsvHelper;
+using System;
 using System.Collections.Generic;
+using System.Dynamic;
+using System.Formats.Asn1;
+using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using TicketFlightsBooking.model;
 
 namespace TicketFlightsBooking.service
 {
-    public class CSVReader
+    public class CSVReader<TSystem, TObject>
+        where TSystem : class
+        where TObject : class
     {
-        public CSVReader() { }
-
-        public void GetFlightsData(string filePath)
+        private TSystem system;
+        private string nameOfAddMethod;
+        public CSVReader(TSystem system, string methodName)
         {
-            FlightSystem system =FlightSystem.Instance;
-            //check file existance 
+            this.system = system ?? throw new Exception($"faild to create an instance");
+            nameOfAddMethod = methodName;
+            try
+            {
+                var AddMethod = typeof(TSystem).GetMethod(methodName) ?? throw new(("faild to call the method"));
+            }
+            catch
+            {
+       
+                throw;
+            }
+        }
+
+        public void UploadFlightsData(string filePath)
+        {
+
             if (!File.Exists(filePath))
             {
                 Console.WriteLine("Invalid path");
+                return;
             }
-            //read file
-            string[] lines = File.ReadAllLines(filePath);
-            //skip headings line
-            lines = lines.Skip(1).ToArray();
-            foreach (string line in lines)
+            using (var reader = new StreamReader(filePath))
+            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
-                string[] fields = line.Split(',');
+                try
+                {
 
-                Flight flight = CreateFlightObject(fields);
-                system.AddItem(flight);
+                    IEnumerable<TObject> flights = csv.GetRecords<TObject>();
+                    foreach (var flight in flights)
+                    {
+
+
+                        var addMethod = typeof(TSystem).GetMethod(nameOfAddMethod);
+
+                        addMethod!.Invoke(system, new object[] { flight });
+                    }
+
+
+
+                    Console.WriteLine("Sucessfully upload data");
+                }
+
+                catch
+                {
+                    Console.WriteLine("Check data file");
+                    return;
+
+                }
+
+
             }
-
-            
-           
         }
 
-        public Flight CreateFlightObject(string[] fields)
-        {
-            int i = 0;
-            string id = fields[i++];
-            double price = double.Parse(fields[i++]);
-            string departureCountry = fields[i++];
-            string destinationCountry = fields[i++];
-            string departureDate = fields[i++];
-            string departureAirport = fields[i++];
-            string arrivalAirport = fields[i++];
-            FlightClass type = StringToEnum(fields[i++]);
-
-            Flight flight = new Flight(id, price, departureCountry, destinationCountry, departureDate, departureAirport, arrivalAirport, type);
-            return flight;
-        }
-        public FlightClass StringToEnum(string str)
-        {
-            str = char.ToUpper(str[0]) + str.Substring(1);
 
 
-            if (str == "Economy")
-            {
-                return FlightClass.Economy;
-            }
-            else if (str == "Busniess")
-            {
-                return FlightClass.Busniess;
-            }
-            else
-            {
-                return FlightClass.First;
-            }
-        }
+
+
     }
 }

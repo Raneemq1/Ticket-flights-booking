@@ -9,7 +9,7 @@ namespace TicketFlightsBooking.model
 {
     public class FlightSystem
     {
-        private static FlightSystem? instance=null;
+        private static FlightSystem? instance = null;
         private static List<Flight> flights = new();
 
         private FlightSystem() { }
@@ -18,15 +18,15 @@ namespace TicketFlightsBooking.model
         {
             get
             {
-                if(instance == null)
+                if (instance == null)
                 {
                     instance = new FlightSystem();
                 }
                 return instance;
             }
-            
+
         }
-        public void AddItem(Flight item)
+        public void AddFlight(Flight item)
         {
             flights.Add(item);
         }

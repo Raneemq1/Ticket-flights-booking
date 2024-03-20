@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CsvHelper;
+using System;
+using TicketFlightsBooking.model;
 using TicketFlightsBooking.service;
 using TicketFlightsBooking.utils;
 
@@ -12,7 +14,7 @@ namespace TicketAirportBooking
             MainMenu();
         }
 
-        //Define menus 
+
         static void MainMenu()
         {
             Console.Clear();
@@ -67,9 +69,18 @@ namespace TicketAirportBooking
                 {
                     case "1":
                         {
-                            CSVReader file = new CSVReader();
-                            file.GetFlightsData(SystemData.filePath);
-                            Console.WriteLine("Successfully Upload the data");
+                            FlightSystem system = FlightSystem.Instance;
+
+                            try
+                            {
+                                var csvReader = new CSVReader<FlightSystem, Flight>(system, "AddFlight");
+                                csvReader.UploadFlightsData(SystemData.filePath);
+                            }
+                            catch(Exception ex)
+                            {
+                                Console.WriteLine(ex.Message);
+                                Environment.Exit(0);
+                            }
                             break;
                         }
                     case "2": { break; }

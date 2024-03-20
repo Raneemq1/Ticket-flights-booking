@@ -18,16 +18,16 @@ namespace TicketFlightsBooking.model
         public string ArrivalAirport { get; set; }
         public FlightClass FlightType { get; set; }
 
-        public Flight(string flightId, double flightPrice, string departureCountry, string destinationCountry, string departureDate, string departureAirport, string arrivalAirport, FlightClass flightType)
+        public Flight(string FlightId, double FlightPrice, string DepartureCountry, string DestinationCountry, string DepartureDate, string DepartureAirport, string ArrivalAirport, FlightClass FlightType)
         {
-            FlightId = flightId;
-            FlightPrice = flightPrice;
-            DepartureCountry = departureCountry;
-            DestinationCountry = destinationCountry;
-            DepartureDate = departureDate;
-            DepartureAirport = departureAirport;
-            ArrivalAirport = arrivalAirport;
-            FlightType = flightType;
+            this.FlightId = FlightId;
+            this.FlightPrice = FlightPrice;
+            this.DepartureCountry = DepartureCountry;
+            this.DestinationCountry = DestinationCountry;
+            this.DepartureDate = DepartureDate;
+            this.DepartureAirport = DepartureAirport;
+            this.ArrivalAirport = ArrivalAirport;
+            this.FlightType = FlightType;
         }
 
 
@@ -37,7 +37,7 @@ namespace TicketFlightsBooking.model
     public enum FlightClass
     {
         Economy,
-        Busniess,
+        Business,
         First
     }
 }

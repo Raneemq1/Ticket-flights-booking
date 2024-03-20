@@ -1,6 +1,6 @@
-Flight,Price,Departure Country,Destination Country,Departure Date,Departure Airport,Arrival Airport,Class
-F1001,250,USA,UK,2024-04-10,New York,London,Economy
-F1002,350,France,Italy,2024-04-12,Paris,Rome,Business
-F1003,200,Germany,Spain,2024-04-15,Berlin,Madrid,Economy
-F1004,400,Canada,Japan,2024-04-20,Toronto,Tokyo,First
-F1005,300,Australia,China,2024-04-25,Sydney,Beijing,Business
+FlightId,FlightPrice,DepartureCountry,DestinationCountry,DepartureDate,DepartureAirport,ArrivalAirport,FlightType
+F1001,250,USA,UK,4/10/2024,New York,London,Economy
+F1002,350,France,Italy,4/12/2024,Paris,Rome,Business
+F1003,200,Germany,Spain,4/15/2024,Berlin,Madrid,Economy
+F1004,400,Canada,Japan,4/20/2024,Toronto,Tokyo,First
+F1005,300,Australia,China,4/25/2024,Sydney,Beijing,Business
