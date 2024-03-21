@@ -1,49 +1,24 @@
-﻿using CsvHelper;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using TicketFlightsBooking.model;
-using TicketFlightsBooking.service;
-using TicketFlightsBooking.utils;
 
-namespace TicketAirportBooking
+namespace TicketFlightsBooking.view
 {
-    public class Program
+    public class PassengerMenu
     {
-        static bool loggedIn = false;
-        static Passenger samePassenger;
-        static void Main(string[] args)
-        {
-        
-            MainMenu();
-        }
+        private static bool loggedIn = false;
+        private static Passenger samePassenger;
+        private static BookSystem bookSystem = BookSystem.Instance;
+        private static FlightSystem flightSystem = FlightSystem.Instance;
+        public PassengerMenu() { }
 
-
-        static void MainMenu()
+        public static void Display()
         {
-            loggedIn = false;
-            Console.Clear();
-            string? input;
-            Console.WriteLine("Airport Flight Boooking Continue as");
-            Console.WriteLine("1-Passenger\n2-Manager\n3-Exit");
-            input = Console.ReadLine();
-            while (true)
-            {
-                switch (input)
-                {
-                    case "1": { PassengerMenu(); break; }
-                    case "2": { ManagerMenu(); break; }
-                    case "3": { Environment.Exit(0); break; }
-                    default: Console.WriteLine("Please enter a valid input"); break;
-                }
-                input = Console.ReadLine();
-            }
+            Passenger passenger = loggedIn ? samePassenger : CreatePassenger();
 
-        }
-        static void PassengerMenu()
-        {
-            Passenger passenger=!loggedIn?CreatePassenger():samePassenger;
-            
             Console.Clear();
             string? input;
             Console.WriteLine("1-Book a Flight\n2-Search a flight\n" +
@@ -53,10 +28,10 @@ namespace TicketAirportBooking
             {
                 switch (input)
                 {
-                    case "1": { if(passenger is not null)SearchToBook(passenger); break; }
+                    case "1": { if (passenger is not null) SearchToBook(passenger); break; }
                     case "2": { SearchFlights("passengermenu", passenger); break; }
                     case "3": { ManageBookingMenu(passenger); break; }
-                    case "4": { MainMenu(); break; }
+                    case "4": { loggedIn = false; MainMenu.Display(); break; }
                     case "5": { Environment.Exit(0); break; }
                     default: Console.WriteLine("Please enter a valid input"); break;
                 }
@@ -64,13 +39,12 @@ namespace TicketAirportBooking
                 input = Console.ReadLine();
             }
         }
-
         static void ManageBookingMenu(Passenger passenger)
         {
-            FlightSystem system = FlightSystem.Instance;
+
             Console.Clear();
             Console.WriteLine("1-View Personal Booking\n2-Remove Book\n3-Back");
-            string? input,value,id;
+            string? input, value, id;
             bool res;
             input = Console.ReadLine();
             while (true)
@@ -80,7 +54,7 @@ namespace TicketAirportBooking
                 {
                     case "1":
                         {
-                            ViewBooks(system.ViewBooksForCertainPassenger(passenger));
+                            ViewBooks(bookSystem.ViewBooksForCertainPassenger(passenger));
                             Console.WriteLine("Type any thing to Back");
                             value = Console.ReadLine();
                             break;
@@ -89,8 +63,8 @@ namespace TicketAirportBooking
                         {
                             Console.WriteLine("Enter the FlightId to remove it ");
                             id = Console.ReadLine();
-                            res=system.RemoveBookByFlightId(id,passenger);
-                            if(res) Console.WriteLine("Sucessfully removed");
+                            res = bookSystem.RemoveBookByFlightId(id, passenger);
+                            if (res) Console.WriteLine("Sucessfully removed");
                             else Console.WriteLine("Issue with remove, try again");
                             Console.WriteLine("Type any thing to Back");
                             value = Console.ReadLine();
@@ -98,7 +72,7 @@ namespace TicketAirportBooking
                         }
                     case "3":
                         {
-                            PassengerMenu();
+                            Display();
                             break;
                         }
                     default: break;
@@ -141,7 +115,7 @@ namespace TicketAirportBooking
                 {
                     case "1": { SearchFlights("bookflight", passenger); break; }
                     case "2": { BookFlight(passenger); break; }
-                    case "3": { PassengerMenu(); break; }
+                    case "3": { Display(); break; }
                     default: break;
                 }
                 Console.Clear();
@@ -154,7 +128,7 @@ namespace TicketAirportBooking
         static void BookFlight(Passenger passenger)
         {
             Console.Clear();
-            FlightSystem system = FlightSystem.Instance;
+
             string? input, id;
             Console.WriteLine("Want to book a flight y/n");
             input = Console.ReadLine();
@@ -166,11 +140,11 @@ namespace TicketAirportBooking
                         {
                             Console.WriteLine("Enter The ID of flight you want to book it");
                             id = Console.ReadLine();
-                            Flight flight = system.GetFlightWithId(id);
+                            Flight flight = flightSystem.GetFlightWithId(id);
                             if (flight is not null)
                             {
                                 Book book = new Book(passenger, flight);
-                                system.AddBook(book);
+                                bookSystem.AddItem(book);
                                 Console.WriteLine("Sucessfully Added");
                             }
                             else { Console.WriteLine("Try Again"); }
@@ -267,7 +241,7 @@ namespace TicketAirportBooking
                         }
                     case "8":
                         {
-                            if (baseMenuName is "passengermenu") PassengerMenu(); else SearchToBook(passenger);
+                            if (baseMenuName is "passengermenu") Display(); else SearchToBook(passenger);
                             break;
                         }
                     default: { Console.WriteLine("Enter a valid choice"); break; }
@@ -284,10 +258,10 @@ namespace TicketAirportBooking
 
         static void callMethod(string methodName, dynamic value)
         {
-            FlightSystem system = FlightSystem.Instance;
+
             var method = typeof(FlightSystem).GetMethod($"GetFlightsWith{methodName}") ?? throw new Exception("Invalid Method Name");
             object[] parameters = { value };
-            IEnumerable<Flight> flights = (IEnumerable<Flight>)method.Invoke(system, parameters);
+            IEnumerable<Flight> flights = (IEnumerable<Flight>)method.Invoke(flightSystem, parameters);
             if (!flights.Any()) Console.WriteLine("No match data yet");
             else ViewFlights(flights);
             Console.WriteLine("Press any key to return to the menu");
@@ -326,119 +300,11 @@ namespace TicketAirportBooking
         static void ViewBooks(IEnumerable<Book> books)
         {
             Console.Clear();
-            if(!books.Any()) Console.WriteLine("There is no booking yet");
+            if (!books.Any()) Console.WriteLine("There is no booking yet");
 
             foreach (Book book in books)
             {
                 Console.WriteLine(book.ToString());
-            }
-        }
-
-        static void ManagerMenu()
-        {
-            Console.Clear();
-            string? input;
-            Console.WriteLine("1-Upload data\n2-Filter Booking\n3-Main Menu\n4-Exit");
-            input = Console.ReadLine();
-            while (true)
-            {
-                switch (input)
-                {
-                    case "1":
-                        {
-                            FlightSystem system = FlightSystem.Instance;
-
-                            try
-                            {
-                                var csvReader = new CSVReader<FlightSystem, Flight>(system, "AddFlight");
-                                csvReader.UploadFlightsData(SystemData.filePath);
-                            }
-                            catch (Exception ex)
-                            {
-                                Console.WriteLine(ex.Message);
-                                Environment.Exit(0);
-                            }
-                            break;
-                        }
-                    case "2": { FilterBooking(); break; }
-                    case "3": { MainMenu(); break; }
-                    case "4": { Environment.Exit(0); break; }
-                    default: Console.WriteLine("Please enter a valid number"); break;
-                }
-
-                input = Console.ReadLine();
-            }
-
-        }
-
-        static void FilterBooking()
-        {
-            string? input,searchedValue,value;
-            double price;
-            FlightSystem system = FlightSystem.Instance;
-            Console.Clear();
-            Console.WriteLine("Filter booking by\n1-Flight ID\n2-Flight Price\n" +
-                "3-Passenger Name\n4-Destenation Country\n5-Departure Country\n6-Back To Main Menu");
-            input = Console.ReadLine();
-            while (true)
-            {
-                switch (input){
-                    case "1":
-                        {
-                            Console.WriteLine("Please input the FlightId to retrieve books associated with the same Id.");
-                            searchedValue = Console.ReadLine();
-                            ViewBooks(system.GetBooksWithFlightId(searchedValue));
-                            Console.WriteLine("Write anything to return back");
-                            value=Console.ReadLine();
-                            break;
-                        }
-                    case "2":
-                        {
-                            Console.WriteLine("Please input the Price to retrieve books associated with the range of Price.");
-                            double.TryParse(Console.ReadLine(), out price);
-                            ViewBooks(system.GetBooksWithPrice(price));
-                            Console.WriteLine("Write anything to return back");
-                            value = Console.ReadLine();
-                            break;
-                        }
-
-
-                    case "3":
-                        {
-                            Console.WriteLine("Please input the Destination Country to retrieve books associated with the same country.");
-                            searchedValue = Console.ReadLine();
-                            ViewBooks(system.GetBooksWithDestinationCountry(searchedValue));
-                            Console.WriteLine("Write anything to return back");
-                            value = Console.ReadLine();
-                            break;
-                        }
-                    case "4":
-                        {
-                            Console.WriteLine("Please input the Departure Country to retrieve books associated with the same country.");
-                            searchedValue = Console.ReadLine();
-                            ViewBooks(system.GetBooksWithDepartureCountry(searchedValue));
-                            Console.WriteLine("Write anything to return back");
-                            value = Console.ReadLine();
-                            break;
-                        }
-                    case "5":
-                        {
-                            Console.WriteLine("Please input the Passenger Name to retrieve books associated with the same passenger name.");
-                            searchedValue = Console.ReadLine();
-                            ViewBooks(system.GetBooksWithPassengerName(searchedValue));
-                            Console.WriteLine("\nWrite anything to return back");
-                            value = Console.ReadLine();
-                            break;
-                        }
-                    case "6": { ManagerMenu(); break; }
-                    default:break;
-
-                }
-
-                Console.Clear();
-                Console.WriteLine("Filter booking by\n1-Flight ID\n2-Flight Price\n" +
-               "3-Passenger Name\n4-Destenation Country\n5-Departure Country\n6-Back To Main Menu");
-                input = Console.ReadLine();
             }
         }
     }

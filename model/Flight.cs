@@ -121,7 +121,7 @@ namespace TicketFlightsBooking.model
             string pattern = @"^\d{2}/\d{2}/\d{4}$";
             bool match = Regex.IsMatch(value, pattern);
             bool compareDates = CompareDates(value);
-            
+
             if (match is false || compareDates is false)
             {
                 ExceptionHolder ex = new ExceptionHolder(propertyName, "Date Time", "Required, Allowed Range (today → future)");

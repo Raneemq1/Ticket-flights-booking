@@ -28,12 +28,11 @@ namespace TicketFlightsBooking.service
             }
             catch
             {
-
                 throw;
             }
         }
 
-        public void UploadFlightsData(string filePath)
+        public void UploadFileData(string filePath)
         {
 
             if (!File.Exists(filePath))
@@ -58,7 +57,7 @@ namespace TicketFlightsBooking.service
 
                 catch
                 {
-                    Console.WriteLine("Check data file");
+                    Console.WriteLine("Check file data");
                     return;
 
                 }

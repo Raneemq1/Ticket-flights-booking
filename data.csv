@@ -1,5 +1,5 @@
 FlightId,FlightPrice,DepartureCountry,DestinationCountry,DepartureDate,DepartureAirport,ArrivalAirport,FlightType
-F1001,250,USA,UK,23/03/2024,New York,London,Economy
+F1001,250,USA,UK,28/03/2024,New York,London,Economy
 F1002,350,France,Italy,12/04/2024,Paris,Rome,Business
 F1003,200,Germany,Spain,15/04/2024,Berlin,Madrid,Economy
 F1004,400,Canada,Japan,20/04/2024,Toronto,Tokyo,First
