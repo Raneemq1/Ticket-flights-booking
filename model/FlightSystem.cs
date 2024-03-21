@@ -86,5 +86,15 @@ namespace TicketFlightsBooking.model
         {
             return books;
         }
+
+        public bool RemoveBookByFlightId(string id,Passenger passenger) {
+            if(books.Remove(books.FirstOrDefault(book=>book.Flight.FlightId==id&&book.Passenger.Name==passenger.Name)))return true;
+            return false;
+        }
+
+        public IEnumerable<Book>ViewBooksForCertainPassenger(Passenger passenger)
+        {
+            return books.Where(book=>book.Passenger.Name.Equals(passenger.Name)).ToList();
+        }
     }
 }

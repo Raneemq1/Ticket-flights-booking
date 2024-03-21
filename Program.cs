@@ -10,10 +10,11 @@ namespace TicketAirportBooking
 {
     public class Program
     {
-       static bool loggedIn = false;
+        static bool loggedIn = false;
+        static Passenger samePassenger;
         static void Main(string[] args)
         {
-
+        
             MainMenu();
         }
 
@@ -41,8 +42,8 @@ namespace TicketAirportBooking
         }
         static void PassengerMenu()
         {
-            Passenger passenger = null;
-            if (!loggedIn) {passenger = CreatePassenger();}
+            Passenger passenger=!loggedIn?CreatePassenger():samePassenger;
+            
             Console.Clear();
             string? input;
             Console.WriteLine("1-Book a Flight\n2-Search a flight\n" +
@@ -52,9 +53,9 @@ namespace TicketAirportBooking
             {
                 switch (input)
                 {
-                    case "1": { SearchToBook(passenger); break; }
+                    case "1": { if(passenger is not null)SearchToBook(passenger); break; }
                     case "2": { SearchFlights("passengermenu", passenger); break; }
-                    case "3": { break; }
+                    case "3": { ManageBookingMenu(passenger); break; }
                     case "4": { MainMenu(); break; }
                     case "5": { Environment.Exit(0); break; }
                     default: Console.WriteLine("Please enter a valid input"); break;
@@ -63,13 +64,57 @@ namespace TicketAirportBooking
                 input = Console.ReadLine();
             }
         }
+
+        static void ManageBookingMenu(Passenger passenger)
+        {
+            FlightSystem system = FlightSystem.Instance;
+            Console.Clear();
+            Console.WriteLine("1-View Personal Booking\n2-Remove Book\n3-Back");
+            string? input,value,id;
+            bool res;
+            input = Console.ReadLine();
+            while (true)
+            {
+
+                switch (input)
+                {
+                    case "1":
+                        {
+                            ViewBooks(system.ViewBooksForCertainPassenger(passenger));
+                            Console.WriteLine("Type any thing to Back");
+                            value = Console.ReadLine();
+                            break;
+                        }
+                    case "2":
+                        {
+                            Console.WriteLine("Enter the FlightId to remove it ");
+                            id = Console.ReadLine();
+                            res=system.RemoveBookByFlightId(id,passenger);
+                            if(res) Console.WriteLine("Sucessfully removed");
+                            else Console.WriteLine("Issue with remove, try again");
+                            Console.WriteLine("Type any thing to Back");
+                            value = Console.ReadLine();
+                            break;
+                        }
+                    case "3":
+                        {
+                            PassengerMenu();
+                            break;
+                        }
+                    default: break;
+                }
+                Console.Clear();
+                Console.WriteLine("1-View Personal Booking\n2-Remove Book\n3-Back");
+                input = Console.ReadLine();
+            }
+        }
         static Passenger CreatePassenger()
         {
             loggedIn = true;
             Console.Clear();
-            string id, name, address, phone,input;
+            string id, name, address, phone, input;
             Random random = new Random();
-            id=random.Next(999999).ToString();
+            id = random.Next(999999).ToString();
             Console.WriteLine("Enter your Name");
             name = Console.ReadLine();
             Console.WriteLine("Enter your Address");
@@ -78,32 +123,32 @@ namespace TicketAirportBooking
             phone = Console.ReadLine();
             Passenger passenger = new Passenger(id, name, address, phone); ;
             Console.WriteLine("Sucessfully LoggedIn\n\nPress Any Key to continue");
-            input=Console.ReadLine();
-
+            input = Console.ReadLine();
+            samePassenger = passenger;
             return passenger;
         }
 
         static void SearchToBook(Passenger passenger)
         {
-          
+
             Console.Clear();
             string? input;
             Console.WriteLine("1-Search to book a suitbal travel by using flightId\n2-Book a flight\n3-Main Menu");
-            input= Console.ReadLine();
+            input = Console.ReadLine();
             while (true)
             {
                 switch (input)
                 {
-                    case "1": { SearchFlights("bookflight",passenger); break; }
+                    case "1": { SearchFlights("bookflight", passenger); break; }
                     case "2": { BookFlight(passenger); break; }
                     case "3": { PassengerMenu(); break; }
-                    default:break;
+                    default: break;
                 }
                 Console.Clear();
                 Console.WriteLine("1-Search to book a suitbal travel by using flightId\n2-Book a flight\n3-MainMenu");
                 input = Console.ReadLine();
             }
-           
+
         }
 
         static void BookFlight(Passenger passenger)
@@ -141,7 +186,7 @@ namespace TicketAirportBooking
                 input = Console.ReadLine();
             }
         }
-        static void SearchFlights(string baseMenuName,Passenger passenger)
+        static void SearchFlights(string baseMenuName, Passenger passenger)
         {
             Console.Clear();
             string? input, value;
@@ -277,6 +322,17 @@ namespace TicketAirportBooking
             }
         }
 
+
+        static void ViewBooks(IEnumerable<Book> books)
+        {
+            Console.Clear();
+            if(!books.Any()) Console.WriteLine("There is no booking yet");
+
+            foreach (Book book in books)
+            {
+                Console.WriteLine(book.ToString());
+            }
+        }
 
         static void ManagerMenu()
         {

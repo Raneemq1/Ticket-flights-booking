@@ -17,5 +17,11 @@ namespace TicketFlightsBooking.model
             Passenger = passenger;
             Flight = flight;
         }
+
+        public override string ToString()
+        {
+            return $"Passenger Info:\nPassenger Name:{Passenger.Name}\t Phone:{Passenger.PhoneNumber}\n" +
+                $"Booked Flight Information\n{Flight.ToString()}";
+        }
     }
 }

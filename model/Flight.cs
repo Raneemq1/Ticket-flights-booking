@@ -152,8 +152,8 @@ namespace TicketFlightsBooking.model
         }
         public override string ToString()
         {
-            return $"{FlightId}\t\t{FlightPrice:C}\t\t\t{DestinationCountry}\t\t\t" +
-                $"{DepartureCountry}\t\t{DepartureAirport}\t\t{ArrivalAirport}\t\t{DepartureDate}";
+            return $"{FlightId}\t{FlightPrice:C}\t{DestinationCountry}\t" +
+                $"{DepartureCountry}\t{DepartureAirport}\t{ArrivalAirport}\t{DepartureDate}";
         }
 
     }
