@@ -11,6 +11,7 @@ namespace TicketFlightsBooking.model
     {
         private static FlightSystem? instance = null;
         private static List<Flight> flights = new();
+        private static List<Book> books = new();
 
         private FlightSystem() { }
 
@@ -71,6 +72,19 @@ namespace TicketFlightsBooking.model
             return flights.Where(flight => flight.DepartureDate.Contains(date)).ToList();
         }
 
+        public Flight GetFlightWithId(string id)
+        {
+            return flights.FirstOrDefault(flight => flight.FlightId == id);
+        }
+        public void AddBook(Book book)
+        {
+            books.Add(book);
+        }
 
+      
+        public IEnumerable<Book> GetBooks()
+        {
+            return books;
+        }
     }
 }

@@ -10,6 +10,7 @@ namespace TicketAirportBooking
 {
     public class Program
     {
+       static bool loggedIn = false;
         static void Main(string[] args)
         {
 
@@ -19,6 +20,7 @@ namespace TicketAirportBooking
 
         static void MainMenu()
         {
+            loggedIn = false;
             Console.Clear();
             string? input;
             Console.WriteLine("Airport Flight Boooking Continue as");
@@ -39,6 +41,8 @@ namespace TicketAirportBooking
         }
         static void PassengerMenu()
         {
+            Passenger passenger = null;
+            if (!loggedIn) {passenger = CreatePassenger();}
             Console.Clear();
             string? input;
             Console.WriteLine("1-Book a Flight\n2-Search a flight\n" +
@@ -48,8 +52,8 @@ namespace TicketAirportBooking
             {
                 switch (input)
                 {
-                    case "1": { break; }
-                    case "2": { SearchFlights(); break; }
+                    case "1": { SearchToBook(passenger); break; }
+                    case "2": { SearchFlights("passengermenu", passenger); break; }
                     case "3": { break; }
                     case "4": { MainMenu(); break; }
                     case "5": { Environment.Exit(0); break; }
@@ -59,8 +63,85 @@ namespace TicketAirportBooking
                 input = Console.ReadLine();
             }
         }
-        
-        static void SearchFlights()
+        static Passenger CreatePassenger()
+        {
+            loggedIn = true;
+            Console.Clear();
+            string id, name, address, phone,input;
+            Random random = new Random();
+            id=random.Next(999999).ToString();
+            Console.WriteLine("Enter your Name");
+            name = Console.ReadLine();
+            Console.WriteLine("Enter your Address");
+            address = Console.ReadLine();
+            Console.WriteLine("Enter your Phone Number");
+            phone = Console.ReadLine();
+            Passenger passenger = new Passenger(id, name, address, phone); ;
+            Console.WriteLine("Sucessfully LoggedIn\n\nPress Any Key to continue");
+            input=Console.ReadLine();
+
+            return passenger;
+        }
+
+        static void SearchToBook(Passenger passenger)
+        {
+          
+            Console.Clear();
+            string? input;
+            Console.WriteLine("1-Search to book a suitbal travel by using flightId\n2-Book a flight\n3-Main Menu");
+            input= Console.ReadLine();
+            while (true)
+            {
+                switch (input)
+                {
+                    case "1": { SearchFlights("bookflight",passenger); break; }
+                    case "2": { BookFlight(passenger); break; }
+                    case "3": { PassengerMenu(); break; }
+                    default:break;
+                }
+                Console.Clear();
+                Console.WriteLine("1-Search to book a suitbal travel by using flightId\n2-Book a flight\n3-MainMenu");
+                input = Console.ReadLine();
+            }
+           
+        }
+
+        static void BookFlight(Passenger passenger)
+        {
+            Console.Clear();
+            FlightSystem system = FlightSystem.Instance;
+            string? input, id;
+            Console.WriteLine("Want to book a flight y/n");
+            input = Console.ReadLine();
+            while (true)
+            {
+                switch (input)
+                {
+                    case "y":
+                        {
+                            Console.WriteLine("Enter The ID of flight you want to book it");
+                            id = Console.ReadLine();
+                            Flight flight = system.GetFlightWithId(id);
+                            if (flight is not null)
+                            {
+                                Book book = new Book(passenger, flight);
+                                system.AddBook(book);
+                                Console.WriteLine("Sucessfully Added");
+                            }
+                            else { Console.WriteLine("Try Again"); }
+                            Console.WriteLine("Enter any thing to return back");
+                            input = Console.ReadLine();
+                            break;
+                        }
+                    case "n": SearchToBook(passenger); break;
+                    default: Console.WriteLine("Please choose y/n only"); break;
+                }
+                Console.Clear();
+                Console.WriteLine("Want to book a flight y/n");
+                input = Console.ReadLine();
+            }
+        }
+        static void SearchFlights(string baseMenuName,Passenger passenger)
         {
             Console.Clear();
             string? input, value;
@@ -139,7 +220,11 @@ namespace TicketAirportBooking
                             catch (Exception ex) { Console.WriteLine(ex.ToString()); return; }
                             break;
                         }
-                    case "8": { PassengerMenu(); break; }
+                    case "8":
+                        {
+                            if (baseMenuName is "passengermenu") PassengerMenu(); else SearchToBook(passenger);
+                            break;
+                        }
                     default: { Console.WriteLine("Enter a valid choice"); break; }
 
                 }
