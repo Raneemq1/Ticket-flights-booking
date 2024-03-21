@@ -122,7 +122,7 @@ namespace TicketFlightsBooking.model
             bool match = Regex.IsMatch(value, pattern);
             bool compareDates = CompareDates(value);
             
-            if (match == false || compareDates == false)
+            if (match is false || compareDates is false)
             {
                 ExceptionHolder ex = new ExceptionHolder(propertyName, "Date Time", "Required, Allowed Range (today → future)");
                 Console.WriteLine(ex.ToString());
@@ -149,6 +149,11 @@ namespace TicketFlightsBooking.model
                 throw new Exception();
             }
             return true;
+        }
+        public override string ToString()
+        {
+            return $"{FlightId}\t\t{FlightPrice:C}\t\t\t{DestinationCountry}\t\t\t" +
+                $"{DepartureCountry}\t\t{DepartureAirport}\t\t{ArrivalAirport}\t\t{DepartureDate}";
         }
 
     }

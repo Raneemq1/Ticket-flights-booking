@@ -18,7 +18,7 @@ namespace TicketFlightsBooking.model
         {
             get
             {
-                if (instance == null)
+                if (instance is null)
                 {
                     instance = new FlightSystem();
                 }
@@ -35,5 +35,42 @@ namespace TicketFlightsBooking.model
         {
             return new ReadOnlyCollection<Flight>(flights);
         }
+
+        public IEnumerable<Flight> GetFlightsWithDestinationCountry(string country)
+        {
+            return flights.Where(flight => flight.DestinationCountry.ToLower() == country.ToLower()).ToList();
+        }
+        
+        public IEnumerable<Flight> GetFlightsWithDepartureCountry(string country)
+        {
+            return flights.Where(flight => flight.DepartureCountry.ToLower() == country.ToLower()).ToList();
+        }
+
+        public IEnumerable<Flight> GetFlightsWithArrivalAirport(string name)
+        {
+            return flights.Where(flight => flight.ArrivalAirport.ToLower() == name.ToLower()).ToList();
+        }
+
+        public IEnumerable<Flight> GetFlightsWithDepartureAirport(string name)
+        {
+            return flights.Where(flight => flight.DepartureAirport.ToLower() == name.ToLower()).ToList();
+        }
+        
+        public IEnumerable<Flight> GetFlightsWithPrice(double price)
+        {
+            return flights.Where(flight => flight.FlightPrice <= price).ToList();
+        }
+
+        public IEnumerable<Flight> GetFlightsWithClassType(FlightClass type)
+        {
+            return flights.Where(flight => flight.FlightType == type).ToList();
+        }
+
+        public IEnumerable<Flight> GetFlightsWithDepartureDate(string date)
+        {
+            return flights.Where(flight => flight.DepartureDate.Contains(date)).ToList();
+        }
+
+
     }
 }
