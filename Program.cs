@@ -360,7 +360,7 @@ namespace TicketAirportBooking
                             }
                             break;
                         }
-                    case "2": { break; }
+                    case "2": { FilterBooking(); break; }
                     case "3": { MainMenu(); break; }
                     case "4": { Environment.Exit(0); break; }
                     default: Console.WriteLine("Please enter a valid number"); break;
@@ -369,6 +369,77 @@ namespace TicketAirportBooking
                 input = Console.ReadLine();
             }
 
+        }
+
+        static void FilterBooking()
+        {
+            string? input,searchedValue,value;
+            double price;
+            FlightSystem system = FlightSystem.Instance;
+            Console.Clear();
+            Console.WriteLine("Filter booking by\n1-Flight ID\n2-Flight Price\n" +
+                "3-Passenger Name\n4-Destenation Country\n5-Departure Country\n6-Back To Main Menu");
+            input = Console.ReadLine();
+            while (true)
+            {
+                switch (input){
+                    case "1":
+                        {
+                            Console.WriteLine("Please input the FlightId to retrieve books associated with the same Id.");
+                            searchedValue = Console.ReadLine();
+                            ViewBooks(system.GetBooksWithFlightId(searchedValue));
+                            Console.WriteLine("Write anything to return back");
+                            value=Console.ReadLine();
+                            break;
+                        }
+                    case "2":
+                        {
+                            Console.WriteLine("Please input the Price to retrieve books associated with the range of Price.");
+                            double.TryParse(Console.ReadLine(), out price);
+                            ViewBooks(system.GetBooksWithPrice(price));
+                            Console.WriteLine("Write anything to return back");
+                            value = Console.ReadLine();
+                            break;
+                        }
+
+
+                    case "3":
+                        {
+                            Console.WriteLine("Please input the Destination Country to retrieve books associated with the same country.");
+                            searchedValue = Console.ReadLine();
+                            ViewBooks(system.GetBooksWithDestinationCountry(searchedValue));
+                            Console.WriteLine("Write anything to return back");
+                            value = Console.ReadLine();
+                            break;
+                        }
+                    case "4":
+                        {
+                            Console.WriteLine("Please input the Departure Country to retrieve books associated with the same country.");
+                            searchedValue = Console.ReadLine();
+                            ViewBooks(system.GetBooksWithDepartureCountry(searchedValue));
+                            Console.WriteLine("Write anything to return back");
+                            value = Console.ReadLine();
+                            break;
+                        }
+                    case "5":
+                        {
+                            Console.WriteLine("Please input the Passenger Name to retrieve books associated with the same passenger name.");
+                            searchedValue = Console.ReadLine();
+                            ViewBooks(system.GetBooksWithPassengerName(searchedValue));
+                            Console.WriteLine("\nWrite anything to return back");
+                            value = Console.ReadLine();
+                            break;
+                        }
+                    case "6": { ManagerMenu(); break; }
+                    default:break;
+
+                }
+
+                Console.Clear();
+                Console.WriteLine("Filter booking by\n1-Flight ID\n2-Flight Price\n" +
+               "3-Passenger Name\n4-Destenation Country\n5-Departure Country\n6-Back To Main Menu");
+                input = Console.ReadLine();
+            }
         }
     }
 }

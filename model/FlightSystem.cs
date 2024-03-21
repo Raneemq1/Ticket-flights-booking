@@ -96,5 +96,30 @@ namespace TicketFlightsBooking.model
         {
             return books.Where(book=>book.Passenger.Name.Equals(passenger.Name)).ToList();
         }
+
+        public IEnumerable<Book>GetBooksWithFlightId(string id)
+        {
+            return books.Where(book=>book.Flight.FlightId == id).ToList();  
+        }
+
+        public IEnumerable<Book> GetBooksWithPrice(double price)
+        {
+            return books.Where(book => book.Flight.FlightPrice <= price).ToList();
+        }
+
+        public IEnumerable<Book> GetBooksWithDestinationCountry(string country)
+        {
+            return books.Where(book => book.Flight.DestinationCountry == country).ToList();
+        }
+
+        public IEnumerable<Book> GetBooksWithDepartureCountry(string country)
+        {
+            return books.Where(book => book.Flight.DepartureCountry == country).ToList();
+        }
+
+        public IEnumerable<Book> GetBooksWithPassengerName(string name)
+        {
+            return books.Where(book => book.Passenger.Name == name).ToList();
+        }
     }
 }
