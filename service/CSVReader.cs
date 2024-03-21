@@ -28,7 +28,7 @@ namespace TicketFlightsBooking.service
             }
             catch
             {
-       
+
                 throw;
             }
         }
@@ -46,18 +46,12 @@ namespace TicketFlightsBooking.service
             {
                 try
                 {
-
+                    var addMethod = typeof(TSystem).GetMethod(nameOfAddMethod);
                     IEnumerable<TObject> flights = csv.GetRecords<TObject>();
                     foreach (var flight in flights)
                     {
-
-
-                        var addMethod = typeof(TSystem).GetMethod(nameOfAddMethod);
-
                         addMethod!.Invoke(system, new object[] { flight });
                     }
-
-
 
                     Console.WriteLine("Sucessfully upload data");
                 }
