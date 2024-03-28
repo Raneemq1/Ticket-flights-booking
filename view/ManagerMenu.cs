@@ -13,6 +13,7 @@ namespace TicketFlightsBooking.view
     {
         private static BookSystem bookSystem = BookSystem.Instance;
         private static FlightSystem flightSystem = FlightSystem.Instance;
+        private static bool isUploaded = false;
         public ManagerMenu() { }
 
         public static void Display()
@@ -27,15 +28,21 @@ namespace TicketFlightsBooking.view
                 {
                     case "1":
                         {
-                            try
+                            if (isUploaded)
+                                Console.WriteLine("Data has already been uploaded.");
+                            else
                             {
-                                var csvReader = new CSVReader<FlightSystem,Flight>(flightSystem, "AddItem");
-                                csvReader.UploadFileData(SystemData.filePath);
-                            }
-                            catch (Exception ex)
-                            {
-                                Console.WriteLine(ex.Message);
-                                Environment.Exit(0);
+                                try
+                                {
+                                    var csvReader = new CSVReader<FlightSystem, Flight>(flightSystem, "AddItem");
+                                    csvReader.UploadFileData(SystemData.filePath);
+                                    isUploaded = true;
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine(ex.Message);
+                                    Environment.Exit(0);
+                                }
                             }
                             break;
                         }
